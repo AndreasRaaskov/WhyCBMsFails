@@ -1,0 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+*.pyc
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Data directories (datasets are typically large and shouldn't be in git)
+
+CUB_200_2011/
+Class_attr_data_10/
+mainpulated_mallard/
+
+# Model files and outputs
+Models/
+*.pkl
+*.pth
+*.h5
+*.ckpt
+*.weights
+*.model
+
+# Logs and results
+logs/
+*.log
+runs/
+results/
+outputs/
+
+# OS
+.DS_Store
+Thumbs.db
