@@ -109,6 +109,28 @@ def accuracy_analysis(dataset, XtoC_Model, CtoY_Model, concept_idx, mask_size=50
     target_mask_tn = 0
     target_mask_fn = 0
 
+    # Confusion matrices for SAME class predictions
+    same_pred_target_orig_tp = 0
+    same_pred_target_orig_fp = 0
+    same_pred_target_orig_tn = 0
+    same_pred_target_orig_fn = 0
+
+    same_pred_target_mask_tp = 0
+    same_pred_target_mask_fp = 0
+    same_pred_target_mask_tn = 0
+    same_pred_target_mask_fn = 0
+
+    # Confusion matrices for DIFFERENT class predictions
+    diff_pred_target_orig_tp = 0
+    diff_pred_target_orig_fp = 0
+    diff_pred_target_orig_tn = 0
+    diff_pred_target_orig_fn = 0
+
+    diff_pred_target_mask_tp = 0
+    diff_pred_target_mask_fp = 0
+    diff_pred_target_mask_tn = 0
+    diff_pred_target_mask_fn = 0
+
     with torch.no_grad():
         for idx in tqdm(range(len(dataset)), desc=f"Analyzing concept {concept_idx}"):
             x, c, y, coordinates = dataset[idx]
@@ -192,6 +214,27 @@ def accuracy_analysis(dataset, XtoC_Model, CtoY_Model, concept_idx, mask_size=50
                 if pred_concept_mask == true_concept:
                     same_pred_target_mask_correct += 1
 
+                # Confusion matrix for same class predictions
+                # Original
+                if pred_concept_orig == 1 and true_concept_int == 1:
+                    same_pred_target_orig_tp += 1
+                elif pred_concept_orig == 1 and true_concept_int == 0:
+                    same_pred_target_orig_fp += 1
+                elif pred_concept_orig == 0 and true_concept_int == 0:
+                    same_pred_target_orig_tn += 1
+                elif pred_concept_orig == 0 and true_concept_int == 1:
+                    same_pred_target_orig_fn += 1
+
+                # Masked
+                if pred_concept_mask == 1 and true_concept_int == 1:
+                    same_pred_target_mask_tp += 1
+                elif pred_concept_mask == 1 and true_concept_int == 0:
+                    same_pred_target_mask_fp += 1
+                elif pred_concept_mask == 0 and true_concept_int == 0:
+                    same_pred_target_mask_tn += 1
+                elif pred_concept_mask == 0 and true_concept_int == 1:
+                    same_pred_target_mask_fn += 1
+
                 # 3. Other concepts accuracy (same class predictions)
                 for other_idx in range(n_concepts):
                     if other_idx == concept_idx:
@@ -206,6 +249,27 @@ def accuracy_analysis(dataset, XtoC_Model, CtoY_Model, concept_idx, mask_size=50
                         same_pred_other_orig_correct += 1
                     if pred_other_mask == true_other_concept:
                         same_pred_other_mask_correct += 1
+            else:
+                # Confusion matrix for different class predictions
+                # Original
+                if pred_concept_orig == 1 and true_concept_int == 1:
+                    diff_pred_target_orig_tp += 1
+                elif pred_concept_orig == 1 and true_concept_int == 0:
+                    diff_pred_target_orig_fp += 1
+                elif pred_concept_orig == 0 and true_concept_int == 0:
+                    diff_pred_target_orig_tn += 1
+                elif pred_concept_orig == 0 and true_concept_int == 1:
+                    diff_pred_target_orig_fn += 1
+
+                # Masked
+                if pred_concept_mask == 1 and true_concept_int == 1:
+                    diff_pred_target_mask_tp += 1
+                elif pred_concept_mask == 1 and true_concept_int == 0:
+                    diff_pred_target_mask_fp += 1
+                elif pred_concept_mask == 0 and true_concept_int == 0:
+                    diff_pred_target_mask_tn += 1
+                elif pred_concept_mask == 0 and true_concept_int == 1:
+                    diff_pred_target_mask_fn += 1
 
     # Calculate accuracies
     results = {
@@ -234,6 +298,28 @@ def accuracy_analysis(dataset, XtoC_Model, CtoY_Model, concept_idx, mask_size=50
         'target_mask_fp': target_mask_fp,
         'target_mask_tn': target_mask_tn,
         'target_mask_fn': target_mask_fn,
+
+        # Confusion matrices for SAME class predictions
+        'same_pred_target_orig_tp': same_pred_target_orig_tp,
+        'same_pred_target_orig_fp': same_pred_target_orig_fp,
+        'same_pred_target_orig_tn': same_pred_target_orig_tn,
+        'same_pred_target_orig_fn': same_pred_target_orig_fn,
+
+        'same_pred_target_mask_tp': same_pred_target_mask_tp,
+        'same_pred_target_mask_fp': same_pred_target_mask_fp,
+        'same_pred_target_mask_tn': same_pred_target_mask_tn,
+        'same_pred_target_mask_fn': same_pred_target_mask_fn,
+
+        # Confusion matrices for DIFFERENT class predictions
+        'diff_pred_target_orig_tp': diff_pred_target_orig_tp,
+        'diff_pred_target_orig_fp': diff_pred_target_orig_fp,
+        'diff_pred_target_orig_tn': diff_pred_target_orig_tn,
+        'diff_pred_target_orig_fn': diff_pred_target_orig_fn,
+
+        'diff_pred_target_mask_tp': diff_pred_target_mask_tp,
+        'diff_pred_target_mask_fp': diff_pred_target_mask_fp,
+        'diff_pred_target_mask_tn': diff_pred_target_mask_tn,
+        'diff_pred_target_mask_fn': diff_pred_target_mask_fn,
 
         # 3. Other concepts (same class predictions)
         '3_other_concepts_same_pred_original': same_pred_other_orig_correct / same_pred_other_total if same_pred_other_total > 0 else 0,
@@ -275,16 +361,38 @@ def simple_analysis(results, concept_idx, concept_name=None):
     print(f"   Images: {results['2_target_concept_all_images_count']}")
     print(f"   Original: {results['2_target_concept_all_images_original']:.4f}")
     print(f"   Masked:   {results['2_target_concept_all_images_masked']:.4f}")
-    print(f"\n   Original Confusion Matrix:")
+    print(f"\n   Original Confusion Matrix (All Images):")
     print(f"      TP (Pred=1, True=1): {results['target_orig_tp']}")
     print(f"      FP (Pred=1, True=0): {results['target_orig_fp']}")
     print(f"      TN (Pred=0, True=0): {results['target_orig_tn']}")
     print(f"      FN (Pred=0, True=1): {results['target_orig_fn']}")
-    print(f"\n   Masked Confusion Matrix:")
+    print(f"\n   Masked Confusion Matrix (All Images):")
     print(f"      TP (Pred=1, True=1): {results['target_mask_tp']}")
     print(f"      FP (Pred=1, True=0): {results['target_mask_fp']}")
     print(f"      TN (Pred=0, True=0): {results['target_mask_tn']}")
     print(f"      FN (Pred=0, True=1): {results['target_mask_fn']}")
+
+    print(f"\n   SAME Class Prediction - Original Confusion Matrix:")
+    print(f"      TP (Pred=1, True=1): {results['same_pred_target_orig_tp']}")
+    print(f"      FP (Pred=1, True=0): {results['same_pred_target_orig_fp']}")
+    print(f"      TN (Pred=0, True=0): {results['same_pred_target_orig_tn']}")
+    print(f"      FN (Pred=0, True=1): {results['same_pred_target_orig_fn']}")
+    print(f"\n   SAME Class Prediction - Masked Confusion Matrix:")
+    print(f"      TP (Pred=1, True=1): {results['same_pred_target_mask_tp']}")
+    print(f"      FP (Pred=1, True=0): {results['same_pred_target_mask_fp']}")
+    print(f"      TN (Pred=0, True=0): {results['same_pred_target_mask_tn']}")
+    print(f"      FN (Pred=0, True=1): {results['same_pred_target_mask_fn']}")
+
+    print(f"\n   DIFFERENT Class Prediction - Original Confusion Matrix:")
+    print(f"      TP (Pred=1, True=1): {results['diff_pred_target_orig_tp']}")
+    print(f"      FP (Pred=1, True=0): {results['diff_pred_target_orig_fp']}")
+    print(f"      TN (Pred=0, True=0): {results['diff_pred_target_orig_tn']}")
+    print(f"      FN (Pred=0, True=1): {results['diff_pred_target_orig_fn']}")
+    print(f"\n   DIFFERENT Class Prediction - Masked Confusion Matrix:")
+    print(f"      TP (Pred=1, True=1): {results['diff_pred_target_mask_tp']}")
+    print(f"      FP (Pred=1, True=0): {results['diff_pred_target_mask_fp']}")
+    print(f"      TN (Pred=0, True=0): {results['diff_pred_target_mask_tn']}")
+    print(f"      FN (Pred=0, True=1): {results['diff_pred_target_mask_fn']}")
 
     print(f"\n3. OTHER CONCEPTS ACCURACY (Same Class Predictions)")
     print(f"   Predictions: {results['3_other_concepts_same_pred_count']}")
