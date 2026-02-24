@@ -1,0 +1,108 @@
+{
+  "meta_concept": "tail",
+  "sub_concepts": [
+    "has_tail_shape::notched_tail",
+    "has_tail_pattern::solid",
+    "has_tail_pattern::striped",
+    "has_tail_pattern::multi-colored"
+  ],
+  "n_sub_concepts": 4,
+  "total_images": 5794,
+  "images_without_coords": 1949,
+  "same_class_pred_count": 3525,
+  "diff_class_pred_count": 320,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 3188,
+        "fp": 268,
+        "tn": 11478,
+        "fn": 446
+      },
+      "same_pred": {
+        "tp": 3002,
+        "fp": 207,
+        "tn": 10539,
+        "fn": 352
+      },
+      "diff_pred": {
+        "tp": 186,
+        "fp": 61,
+        "tn": 939,
+        "fn": 94
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 3167,
+        "fp": 268,
+        "tn": 11478,
+        "fn": 467
+      },
+      "same_pred": {
+        "tp": 2993,
+        "fp": 207,
+        "tn": 10539,
+        "fn": 361
+      },
+      "diff_pred": {
+        "tp": 174,
+        "fp": 61,
+        "tn": 939,
+        "fn": 106
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 75993,
+        "fp": 5154,
+        "tn": 325159,
+        "fn": 8954
+      },
+      "same_pred": {
+        "tp": 70960,
+        "fp": 4101,
+        "tn": 298881,
+        "fn": 6758
+      },
+      "diff_pred": {
+        "tp": 5033,
+        "fp": 1053,
+        "tn": 26278,
+        "fn": 2196
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 75395,
+        "fp": 5134,
+        "tn": 325179,
+        "fn": 9552
+      },
+      "same_pred": {
+        "tp": 70738,
+        "fp": 4059,
+        "tn": 298923,
+        "fn": 6980
+      },
+      "diff_pred": {
+        "tp": 4657,
+        "fp": 1075,
+        "tn": 26256,
+        "fn": 2572
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 2804,
+      "total": 3845
+    },
+    "masked": {
+      "correct": 2768,
+      "total": 3845
+    }
+  }
+}

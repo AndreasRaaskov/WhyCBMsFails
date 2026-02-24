@@ -1,0 +1,110 @@
+{
+  "meta_concept": "nape",
+  "sub_concepts": [
+    "has_nape_color::brown",
+    "has_nape_color::grey",
+    "has_nape_color::yellow",
+    "has_nape_color::black",
+    "has_nape_color::white",
+    "has_nape_color::buff"
+  ],
+  "n_sub_concepts": 6,
+  "total_images": 5794,
+  "images_without_coords": 334,
+  "same_class_pred_count": 3806,
+  "diff_class_pred_count": 1654,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 4103,
+        "fp": 328,
+        "tn": 27774,
+        "fn": 555
+      },
+      "same_pred": {
+        "tp": 3026,
+        "fp": 152,
+        "tn": 19429,
+        "fn": 229
+      },
+      "diff_pred": {
+        "tp": 1077,
+        "fp": 176,
+        "tn": 8345,
+        "fn": 326
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 3446,
+        "fp": 602,
+        "tn": 27500,
+        "fn": 1212
+      },
+      "same_pred": {
+        "tp": 2918,
+        "fp": 153,
+        "tn": 19428,
+        "fn": 337
+      },
+      "diff_pred": {
+        "tp": 528,
+        "fp": 449,
+        "tn": 8072,
+        "fn": 875
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 109127,
+        "fp": 6572,
+        "tn": 451338,
+        "fn": 11723
+      },
+      "same_pred": {
+        "tp": 78391,
+        "fp": 3123,
+        "tn": 316902,
+        "fn": 5020
+      },
+      "diff_pred": {
+        "tp": 30736,
+        "fp": 3449,
+        "tn": 134436,
+        "fn": 6703
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 96777,
+        "fp": 11629,
+        "tn": 446281,
+        "fn": 24073
+      },
+      "same_pred": {
+        "tp": 76342,
+        "fp": 3455,
+        "tn": 316570,
+        "fn": 7069
+      },
+      "diff_pred": {
+        "tp": 20435,
+        "fp": 8174,
+        "tn": 129711,
+        "fn": 17004
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 4096,
+      "total": 5460
+    },
+    "masked": {
+      "correct": 3209,
+      "total": 5460
+    }
+  }
+}

@@ -1,0 +1,109 @@
+{
+  "meta_concept": "throat",
+  "sub_concepts": [
+    "has_throat_color::grey",
+    "has_throat_color::yellow",
+    "has_throat_color::black",
+    "has_throat_color::white",
+    "has_throat_color::buff"
+  ],
+  "n_sub_concepts": 5,
+  "total_images": 5794,
+  "images_without_coords": 225,
+  "same_class_pred_count": 3702,
+  "diff_class_pred_count": 1867,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 3946,
+        "fp": 235,
+        "tn": 23229,
+        "fn": 435
+      },
+      "same_pred": {
+        "tp": 2723,
+        "fp": 105,
+        "tn": 15521,
+        "fn": 161
+      },
+      "diff_pred": {
+        "tp": 1223,
+        "fp": 130,
+        "tn": 7708,
+        "fn": 274
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 3253,
+        "fp": 542,
+        "tn": 22922,
+        "fn": 1128
+      },
+      "same_pred": {
+        "tp": 2599,
+        "fp": 112,
+        "tn": 15514,
+        "fn": 285
+      },
+      "diff_pred": {
+        "tp": 654,
+        "fp": 430,
+        "tn": 7408,
+        "fn": 843
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 111395,
+        "fp": 6813,
+        "tn": 465507,
+        "fn": 12168
+      },
+      "same_pred": {
+        "tp": 77055,
+        "fp": 3123,
+        "tn": 310818,
+        "fn": 5118
+      },
+      "diff_pred": {
+        "tp": 34340,
+        "fp": 3690,
+        "tn": 154689,
+        "fn": 7050
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 96992,
+        "fp": 12867,
+        "tn": 459453,
+        "fn": 26571
+      },
+      "same_pred": {
+        "tp": 74726,
+        "fp": 3607,
+        "tn": 310334,
+        "fn": 7447
+      },
+      "diff_pred": {
+        "tp": 22266,
+        "fp": 9260,
+        "tn": 149119,
+        "fn": 19124
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 4166,
+      "total": 5569
+    },
+    "masked": {
+      "correct": 3082,
+      "total": 5569
+    }
+  }
+}

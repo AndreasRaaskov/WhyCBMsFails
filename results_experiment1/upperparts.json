@@ -1,0 +1,110 @@
+{
+  "meta_concept": "upperparts",
+  "sub_concepts": [
+    "has_upperparts_color::brown",
+    "has_upperparts_color::grey",
+    "has_upperparts_color::yellow",
+    "has_upperparts_color::black",
+    "has_upperparts_color::white",
+    "has_upperparts_color::buff"
+  ],
+  "n_sub_concepts": 6,
+  "total_images": 5794,
+  "images_without_coords": 5794,
+  "same_class_pred_count": 0,
+  "diff_class_pred_count": 0,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      },
+      "same_pred": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      },
+      "diff_pred": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      },
+      "same_pred": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      },
+      "diff_pred": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      },
+      "same_pred": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      },
+      "diff_pred": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      },
+      "same_pred": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      },
+      "diff_pred": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 0,
+        "fn": 0
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 0,
+      "total": 0
+    },
+    "masked": {
+      "correct": 0,
+      "total": 0
+    }
+  }
+}

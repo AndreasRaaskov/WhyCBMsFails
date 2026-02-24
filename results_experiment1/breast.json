@@ -1,0 +1,113 @@
+{
+  "meta_concept": "breast",
+  "sub_concepts": [
+    "has_breast_pattern::solid",
+    "has_breast_pattern::striped",
+    "has_breast_pattern::multi-colored",
+    "has_breast_color::brown",
+    "has_breast_color::grey",
+    "has_breast_color::yellow",
+    "has_breast_color::black",
+    "has_breast_color::white",
+    "has_breast_color::buff"
+  ],
+  "n_sub_concepts": 9,
+  "total_images": 5794,
+  "images_without_coords": 480,
+  "same_class_pred_count": 3711,
+  "diff_class_pred_count": 1603,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 8546,
+        "fp": 496,
+        "tn": 37952,
+        "fn": 832
+      },
+      "same_pred": {
+        "tp": 6243,
+        "fp": 215,
+        "tn": 26609,
+        "fn": 332
+      },
+      "diff_pred": {
+        "tp": 2303,
+        "fp": 281,
+        "tn": 11343,
+        "fn": 500
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 7709,
+        "fp": 898,
+        "tn": 37550,
+        "fn": 1669
+      },
+      "same_pred": {
+        "tp": 6106,
+        "fp": 236,
+        "tn": 26588,
+        "fn": 469
+      },
+      "diff_pred": {
+        "tp": 1603,
+        "fp": 662,
+        "tn": 10962,
+        "fn": 1200
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 101918,
+        "fp": 6256,
+        "tn": 428041,
+        "fn": 11127
+      },
+      "same_pred": {
+        "tp": 74356,
+        "fp": 2828,
+        "tn": 300355,
+        "fn": 4694
+      },
+      "diff_pred": {
+        "tp": 27562,
+        "fp": 3428,
+        "tn": 127686,
+        "fn": 6433
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 90669,
+        "fp": 10625,
+        "tn": 423672,
+        "fn": 22376
+      },
+      "same_pred": {
+        "tp": 72649,
+        "fp": 3058,
+        "tn": 300125,
+        "fn": 6401
+      },
+      "diff_pred": {
+        "tp": 18020,
+        "fp": 7567,
+        "tn": 123547,
+        "fn": 15975
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 3968,
+      "total": 5314
+    },
+    "masked": {
+      "correct": 3158,
+      "total": 5314
+    }
+  }
+}

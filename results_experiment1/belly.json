@@ -1,0 +1,111 @@
+{
+  "meta_concept": "belly",
+  "sub_concepts": [
+    "has_belly_color::brown",
+    "has_belly_color::grey",
+    "has_belly_color::yellow",
+    "has_belly_color::black",
+    "has_belly_color::white",
+    "has_belly_color::buff",
+    "has_belly_pattern::solid"
+  ],
+  "n_sub_concepts": 7,
+  "total_images": 5794,
+  "images_without_coords": 722,
+  "same_class_pred_count": 3747,
+  "diff_class_pred_count": 1325,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 8016,
+        "fp": 363,
+        "tn": 26514,
+        "fn": 611
+      },
+      "same_pred": {
+        "tp": 6124,
+        "fp": 169,
+        "tn": 19682,
+        "fn": 254
+      },
+      "diff_pred": {
+        "tp": 1892,
+        "fp": 194,
+        "tn": 6832,
+        "fn": 357
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 7504,
+        "fp": 595,
+        "tn": 26282,
+        "fn": 1123
+      },
+      "same_pred": {
+        "tp": 6024,
+        "fp": 170,
+        "tn": 19681,
+        "fn": 354
+      },
+      "diff_pred": {
+        "tp": 1480,
+        "fp": 425,
+        "tn": 6601,
+        "fn": 769
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 97965,
+        "fp": 6077,
+        "tn": 417578,
+        "fn": 10940
+      },
+      "same_pred": {
+        "tp": 75449,
+        "fp": 2928,
+        "tn": 310143,
+        "fn": 4915
+      },
+      "diff_pred": {
+        "tp": 22516,
+        "fp": 3149,
+        "tn": 107435,
+        "fn": 6025
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 90159,
+        "fp": 8949,
+        "tn": 414706,
+        "fn": 18746
+      },
+      "same_pred": {
+        "tp": 74358,
+        "fp": 3008,
+        "tn": 310063,
+        "fn": 6006
+      },
+      "diff_pred": {
+        "tp": 15801,
+        "fp": 5941,
+        "tn": 104643,
+        "fn": 12740
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 3768,
+      "total": 5072
+    },
+    "masked": {
+      "correct": 3198,
+      "total": 5072
+    }
+  }
+}

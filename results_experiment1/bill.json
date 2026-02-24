@@ -1,0 +1,113 @@
+{
+  "meta_concept": "bill",
+  "sub_concepts": [
+    "has_bill_shape::dagger",
+    "has_bill_shape::hooked_seabird",
+    "has_bill_shape::all-purpose",
+    "has_bill_shape::cone",
+    "has_bill_length::about_the_same_as_head",
+    "has_bill_length::shorter_than_head",
+    "has_bill_color::grey",
+    "has_bill_color::black",
+    "has_bill_color::buff"
+  ],
+  "n_sub_concepts": 9,
+  "total_images": 5794,
+  "images_without_coords": 688,
+  "same_class_pred_count": 3846,
+  "diff_class_pred_count": 1260,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 11457,
+        "fp": 560,
+        "tn": 32931,
+        "fn": 1006
+      },
+      "same_pred": {
+        "tp": 8833,
+        "fp": 336,
+        "tn": 24910,
+        "fn": 535
+      },
+      "diff_pred": {
+        "tp": 2624,
+        "fp": 224,
+        "tn": 8021,
+        "fn": 471
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 10498,
+        "fp": 960,
+        "tn": 32531,
+        "fn": 1965
+      },
+      "same_pred": {
+        "tp": 8603,
+        "fp": 393,
+        "tn": 24853,
+        "fn": 765
+      },
+      "diff_pred": {
+        "tp": 1895,
+        "fp": 567,
+        "tn": 7678,
+        "fn": 1200
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 93674,
+        "fp": 6172,
+        "tn": 415289,
+        "fn": 10783
+      },
+      "same_pred": {
+        "tp": 72959,
+        "fp": 3411,
+        "tn": 314227,
+        "fn": 5541
+      },
+      "diff_pred": {
+        "tp": 20715,
+        "fp": 2761,
+        "tn": 101062,
+        "fn": 5242
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 85909,
+        "fp": 9225,
+        "tn": 412236,
+        "fn": 18548
+      },
+      "same_pred": {
+        "tp": 71421,
+        "fp": 3768,
+        "tn": 313870,
+        "fn": 7079
+      },
+      "diff_pred": {
+        "tp": 14488,
+        "fp": 5457,
+        "tn": 98366,
+        "fn": 11469
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 3803,
+      "total": 5106
+    },
+    "masked": {
+      "correct": 3180,
+      "total": 5106
+    }
+  }
+}

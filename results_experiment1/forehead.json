@@ -1,0 +1,110 @@
+{
+  "meta_concept": "forehead",
+  "sub_concepts": [
+    "has_forehead_color::blue",
+    "has_forehead_color::brown",
+    "has_forehead_color::grey",
+    "has_forehead_color::yellow",
+    "has_forehead_color::black",
+    "has_forehead_color::white"
+  ],
+  "n_sub_concepts": 6,
+  "total_images": 5794,
+  "images_without_coords": 664,
+  "same_class_pred_count": 3665,
+  "diff_class_pred_count": 1465,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 3656,
+        "fp": 240,
+        "tn": 26381,
+        "fn": 503
+      },
+      "same_pred": {
+        "tp": 2705,
+        "fp": 123,
+        "tn": 18923,
+        "fn": 239
+      },
+      "diff_pred": {
+        "tp": 951,
+        "fp": 117,
+        "tn": 7458,
+        "fn": 264
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 3105,
+        "fp": 496,
+        "tn": 26125,
+        "fn": 1054
+      },
+      "same_pred": {
+        "tp": 2608,
+        "fp": 161,
+        "tn": 18885,
+        "fn": 336
+      },
+      "diff_pred": {
+        "tp": 497,
+        "fp": 335,
+        "tn": 7240,
+        "fn": 718
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 102607,
+        "fp": 6376,
+        "tn": 423670,
+        "fn": 11127
+      },
+      "same_pred": {
+        "tp": 75733,
+        "fp": 3272,
+        "tn": 304212,
+        "fn": 5273
+      },
+      "diff_pred": {
+        "tp": 26874,
+        "fp": 3104,
+        "tn": 119458,
+        "fn": 5854
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 91970,
+        "fp": 10356,
+        "tn": 419690,
+        "fn": 21764
+      },
+      "same_pred": {
+        "tp": 73560,
+        "fp": 3746,
+        "tn": 303738,
+        "fn": 7446
+      },
+      "diff_pred": {
+        "tp": 18410,
+        "fp": 6610,
+        "tn": 115952,
+        "fn": 14318
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 3843,
+      "total": 5130
+    },
+    "masked": {
+      "correct": 3030,
+      "total": 5130
+    }
+  }
+}

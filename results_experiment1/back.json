@@ -1,0 +1,113 @@
+{
+  "meta_concept": "back",
+  "sub_concepts": [
+    "has_back_color::brown",
+    "has_back_color::grey",
+    "has_back_color::yellow",
+    "has_back_color::black",
+    "has_back_color::white",
+    "has_back_color::buff",
+    "has_back_pattern::solid",
+    "has_back_pattern::striped",
+    "has_back_pattern::multi-colored"
+  ],
+  "n_sub_concepts": 9,
+  "total_images": 5794,
+  "images_without_coords": 1407,
+  "same_class_pred_count": 3181,
+  "diff_class_pred_count": 1206,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 6888,
+        "fp": 533,
+        "tn": 31274,
+        "fn": 788
+      },
+      "same_pred": {
+        "tp": 5131,
+        "fp": 259,
+        "tn": 22887,
+        "fn": 352
+      },
+      "diff_pred": {
+        "tp": 1757,
+        "fp": 274,
+        "tn": 8387,
+        "fn": 436
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 6256,
+        "fp": 882,
+        "tn": 30925,
+        "fn": 1420
+      },
+      "same_pred": {
+        "tp": 5043,
+        "fp": 286,
+        "tn": 22860,
+        "fn": 440
+      },
+      "diff_pred": {
+        "tp": 1213,
+        "fp": 596,
+        "tn": 8065,
+        "fn": 980
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 85596,
+        "fp": 4973,
+        "tn": 352368,
+        "fn": 8924
+      },
+      "same_pred": {
+        "tp": 64264,
+        "fp": 2345,
+        "tn": 257201,
+        "fn": 3833
+      },
+      "diff_pred": {
+        "tp": 21332,
+        "fp": 2628,
+        "tn": 95167,
+        "fn": 5091
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 77603,
+        "fp": 8280,
+        "tn": 349061,
+        "fn": 16917
+      },
+      "same_pred": {
+        "tp": 62878,
+        "fp": 2637,
+        "tn": 256909,
+        "fn": 5219
+      },
+      "diff_pred": {
+        "tp": 14725,
+        "fp": 5643,
+        "tn": 92152,
+        "fn": 11698
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 3336,
+      "total": 4387
+    },
+    "masked": {
+      "correct": 2774,
+      "total": 4387
+    }
+  }
+}

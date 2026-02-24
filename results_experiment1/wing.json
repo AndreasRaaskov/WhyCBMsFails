@@ -1,0 +1,116 @@
+{
+  "meta_concept": "wing",
+  "sub_concepts": [
+    "has_wing_color::brown",
+    "has_wing_color::grey",
+    "has_wing_color::yellow",
+    "has_wing_color::black",
+    "has_wing_color::white",
+    "has_wing_color::buff",
+    "has_wing_shape::rounded-wings",
+    "has_wing_shape::pointed-wings",
+    "has_wing_pattern::solid",
+    "has_wing_pattern::spotted",
+    "has_wing_pattern::striped",
+    "has_wing_pattern::multi-colored"
+  ],
+  "n_sub_concepts": 12,
+  "total_images": 5794,
+  "images_without_coords": 190,
+  "same_class_pred_count": 3848,
+  "diff_class_pred_count": 1756,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 12850,
+        "fp": 951,
+        "tn": 51709,
+        "fn": 1738
+      },
+      "same_pred": {
+        "tp": 9419,
+        "fp": 396,
+        "tn": 35698,
+        "fn": 663
+      },
+      "diff_pred": {
+        "tp": 3431,
+        "fp": 555,
+        "tn": 16011,
+        "fn": 1075
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 10872,
+        "fp": 1569,
+        "tn": 51091,
+        "fn": 3716
+      },
+      "same_pred": {
+        "tp": 9067,
+        "fp": 435,
+        "tn": 35659,
+        "fn": 1015
+      },
+      "diff_pred": {
+        "tp": 1805,
+        "fp": 1134,
+        "tn": 15432,
+        "fn": 2701
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 103233,
+        "fp": 6212,
+        "tn": 439902,
+        "fn": 11053
+      },
+      "same_pred": {
+        "tp": 74113,
+        "fp": 2457,
+        "tn": 304289,
+        "fn": 3941
+      },
+      "diff_pred": {
+        "tp": 29120,
+        "fp": 3755,
+        "tn": 135613,
+        "fn": 7112
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 92029,
+        "fp": 11355,
+        "tn": 434759,
+        "fn": 22257
+      },
+      "same_pred": {
+        "tp": 72164,
+        "fp": 2803,
+        "tn": 303943,
+        "fn": 5890
+      },
+      "diff_pred": {
+        "tp": 19865,
+        "fp": 8552,
+        "tn": 130816,
+        "fn": 16367
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 4178,
+      "total": 5604
+    },
+    "masked": {
+      "correct": 3343,
+      "total": 5604
+    }
+  }
+}

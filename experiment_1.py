@@ -3,8 +3,9 @@ Experiment 1: Meta-concept analysis
 
 For each meta concept (identified by splitting concept names at ::):
 - Apply a single mask per image (all sub-concepts share the same body part location)
-- Calculate accuracy metrics summed over all sub-concepts (target) and all other concepts
-- Save results as JSON files in results/
+- Calculate confusion matrices for manipulated concepts and other concepts
+- Results structured as: {manipulated/other_concepts: {unmasked/masked: {all/same_pred/diff_pred: matrix}}}
+- Save results as JSON files in results_experiment1/
 """
 import os
 import json
@@ -20,21 +21,51 @@ def get_meta_concepts(concept_names):
     """Extract meta concepts by splitting at :: and group their indices."""
     meta_concepts = {}
     for idx, name in enumerate(concept_names):
-        meta = name.split("::")[0]
+        meta = name.split("_")[1]
         if meta not in meta_concepts:
             meta_concepts[meta] = []
         meta_concepts[meta].append(idx)
     return meta_concepts
 
 
+def _empty_matrix():
+    return {'tp': 0, 'fp': 0, 'tn': 0, 'fn': 0}
+
+
+def _update_matrix(matrix, pred, true):
+    if pred == 1 and true == 1:
+        matrix['tp'] += 1
+    elif pred == 1 and true == 0:
+        matrix['fp'] += 1
+    elif pred == 0 and true == 0:
+        matrix['tn'] += 1
+    elif pred == 0 and true == 1:
+        matrix['fn'] += 1
+
+
+def _init_concept_matrices():
+    """Create the {unmasked/masked: {all/same_pred/diff_pred: matrix}} structure."""
+    return {
+        'unmasked': {
+            'all': _empty_matrix(),
+            'same_pred': _empty_matrix(),
+            'diff_pred': _empty_matrix(),
+        },
+        'masked': {
+            'all': _empty_matrix(),
+            'same_pred': _empty_matrix(),
+            'diff_pred': _empty_matrix(),
+        },
+    }
+
+
 def meta_concept_analysis(dataset, XtoC_Model, CtoY_Model, meta_name, concept_indices,
-                          mask_size=50, device='cpu', n_concepts=112):
+                          mask_size=100, device='cpu', n_concepts=112):
     """
     Run analysis for one meta concept.
 
     One forward pass per image since all sub-concepts in a meta concept share the same mask.
-    Metrics are accumulated across all sub-concepts for the target, and across all
-    non-member concepts for "other".
+    Returns structured results with confusion matrices for both manipulated and other concepts.
     """
     XtoC_Model.eval()
     CtoY_Model.eval()
@@ -50,61 +81,15 @@ def meta_concept_analysis(dataset, XtoC_Model, CtoY_Model, meta_name, concept_in
     same_class_pred_count = 0
     diff_class_pred_count = 0
 
-    # Target concept metrics (summed over all sub-concepts)
-    # Same class predictions
-    same_pred_target_orig_correct = 0
-    same_pred_target_mask_correct = 0
-    same_pred_target_total = 0
+    # Confusion matrices: {manipulated/other_concepts: {unmasked/masked: {all/same_pred/diff_pred: matrix}}}
+    manipulated = _init_concept_matrices()
+    other_concepts = _init_concept_matrices()
 
-    # All images
-    all_target_orig_correct = 0
-    all_target_mask_correct = 0
-    all_target_total = 0
-
-    # Confusion matrices for target concept (all images)
-    target_orig_tp = 0
-    target_orig_fp = 0
-    target_orig_tn = 0
-    target_orig_fn = 0
-    target_mask_tp = 0
-    target_mask_fp = 0
-    target_mask_tn = 0
-    target_mask_fn = 0
-
-    # Confusion matrices for target concept (same class pred)
-    same_pred_target_orig_tp = 0
-    same_pred_target_orig_fp = 0
-    same_pred_target_orig_tn = 0
-    same_pred_target_orig_fn = 0
-    same_pred_target_mask_tp = 0
-    same_pred_target_mask_fp = 0
-    same_pred_target_mask_tn = 0
-    same_pred_target_mask_fn = 0
-
-    # Confusion matrices for target concept (diff class pred)
-    diff_pred_target_orig_tp = 0
-    diff_pred_target_orig_fp = 0
-    diff_pred_target_orig_tn = 0
-    diff_pred_target_orig_fn = 0
-    diff_pred_target_mask_tp = 0
-    diff_pred_target_mask_fp = 0
-    diff_pred_target_mask_tn = 0
-    diff_pred_target_mask_fn = 0
-
-    # Other concept metrics (same class predictions)
-    same_pred_other_orig_correct = 0
-    same_pred_other_mask_correct = 0
-    same_pred_other_total = 0
-
-    # Other concept metrics (all images)
-    all_other_orig_correct = 0
-    all_other_mask_correct = 0
-    all_other_total = 0
-
-    # Class accuracy (all images)
-    all_class_orig_correct = 0
-    all_class_mask_correct = 0
-    all_class_total = 0
+    # Class accuracy
+    class_stats = {
+        'unmasked': {'correct': 0, 'total': 0},
+        'masked': {'correct': 0, 'total': 0},
+    }
 
     with torch.no_grad():
         for idx in tqdm(range(len(dataset)), desc=f"Analyzing {meta_name}"):
@@ -130,12 +115,13 @@ def meta_concept_analysis(dataset, XtoC_Model, CtoY_Model, meta_name, concept_in
             pred_class_masked = torch.argmax(class_logits_masked).item()
             true_class = torch.argmax(y).cpu().item()
 
-            # Class accuracy (all images)
-            all_class_total += 1
+            # Class accuracy
+            class_stats['unmasked']['total'] += 1
+            class_stats['masked']['total'] += 1
             if pred_class_original == true_class:
-                all_class_orig_correct += 1
+                class_stats['unmasked']['correct'] += 1
             if pred_class_masked == true_class:
-                all_class_mask_correct += 1
+                class_stats['masked']['correct'] += 1
 
             same_class = (pred_class_original == pred_class_masked)
             if same_class:
@@ -143,182 +129,49 @@ def meta_concept_analysis(dataset, XtoC_Model, CtoY_Model, meta_name, concept_in
             else:
                 diff_class_pred_count += 1
 
-            # Process all sub-concepts in the meta concept
+            subset = 'same_pred' if same_class else 'diff_pred'
+
+            # Process manipulated concepts (target sub-concepts)
             for cidx in concept_indices:
-                true_concept = int(c[cidx].item())
+                true_val = int(c[cidx].item())
                 pred_orig = 1 if concepts_original[cidx].item() >= 0.5 else 0
                 pred_mask = 1 if concepts_masked[cidx].item() >= 0.5 else 0
 
-                # All images target accuracy
-                all_target_total += 1
-                if pred_orig == true_concept:
-                    all_target_orig_correct += 1
-                if pred_mask == true_concept:
-                    all_target_mask_correct += 1
-
-                # Confusion matrix (all images) - original
-                if pred_orig == 1 and true_concept == 1:
-                    target_orig_tp += 1
-                elif pred_orig == 1 and true_concept == 0:
-                    target_orig_fp += 1
-                elif pred_orig == 0 and true_concept == 0:
-                    target_orig_tn += 1
-                elif pred_orig == 0 and true_concept == 1:
-                    target_orig_fn += 1
-
-                # Confusion matrix (all images) - masked
-                if pred_mask == 1 and true_concept == 1:
-                    target_mask_tp += 1
-                elif pred_mask == 1 and true_concept == 0:
-                    target_mask_fp += 1
-                elif pred_mask == 0 and true_concept == 0:
-                    target_mask_tn += 1
-                elif pred_mask == 0 and true_concept == 1:
-                    target_mask_fn += 1
-
-                if same_class:
-                    # Same class pred target accuracy
-                    same_pred_target_total += 1
-                    if pred_orig == true_concept:
-                        same_pred_target_orig_correct += 1
-                    if pred_mask == true_concept:
-                        same_pred_target_mask_correct += 1
-
-                    # Confusion matrix (same class) - original
-                    if pred_orig == 1 and true_concept == 1:
-                        same_pred_target_orig_tp += 1
-                    elif pred_orig == 1 and true_concept == 0:
-                        same_pred_target_orig_fp += 1
-                    elif pred_orig == 0 and true_concept == 0:
-                        same_pred_target_orig_tn += 1
-                    elif pred_orig == 0 and true_concept == 1:
-                        same_pred_target_orig_fn += 1
-
-                    # Confusion matrix (same class) - masked
-                    if pred_mask == 1 and true_concept == 1:
-                        same_pred_target_mask_tp += 1
-                    elif pred_mask == 1 and true_concept == 0:
-                        same_pred_target_mask_fp += 1
-                    elif pred_mask == 0 and true_concept == 0:
-                        same_pred_target_mask_tn += 1
-                    elif pred_mask == 0 and true_concept == 1:
-                        same_pred_target_mask_fn += 1
-                else:
-                    # Confusion matrix (diff class) - original
-                    if pred_orig == 1 and true_concept == 1:
-                        diff_pred_target_orig_tp += 1
-                    elif pred_orig == 1 and true_concept == 0:
-                        diff_pred_target_orig_fp += 1
-                    elif pred_orig == 0 and true_concept == 0:
-                        diff_pred_target_orig_tn += 1
-                    elif pred_orig == 0 and true_concept == 1:
-                        diff_pred_target_orig_fn += 1
-
-                    # Confusion matrix (diff class) - masked
-                    if pred_mask == 1 and true_concept == 1:
-                        diff_pred_target_mask_tp += 1
-                    elif pred_mask == 1 and true_concept == 0:
-                        diff_pred_target_mask_fp += 1
-                    elif pred_mask == 0 and true_concept == 0:
-                        diff_pred_target_mask_tn += 1
-                    elif pred_mask == 0 and true_concept == 1:
-                        diff_pred_target_mask_fn += 1
+                _update_matrix(manipulated['unmasked']['all'], pred_orig, true_val)
+                _update_matrix(manipulated['masked']['all'], pred_mask, true_val)
+                _update_matrix(manipulated['unmasked'][subset], pred_orig, true_val)
+                _update_matrix(manipulated['masked'][subset], pred_mask, true_val)
 
             # Process other concepts
             for oidx in other_indices:
-                true_other = int(c[oidx].item())
-                pred_other_orig = 1 if concepts_original[oidx].item() >= 0.5 else 0
-                pred_other_mask = 1 if concepts_masked[oidx].item() >= 0.5 else 0
+                true_val = int(c[oidx].item())
+                pred_orig = 1 if concepts_original[oidx].item() >= 0.5 else 0
+                pred_mask = 1 if concepts_masked[oidx].item() >= 0.5 else 0
 
-                # All images
-                all_other_total += 1
-                if pred_other_orig == true_other:
-                    all_other_orig_correct += 1
-                if pred_other_mask == true_other:
-                    all_other_mask_correct += 1
-
-                # Same class predictions
-                if same_class:
-                    same_pred_other_total += 1
-                    if pred_other_orig == true_other:
-                        same_pred_other_orig_correct += 1
-                    if pred_other_mask == true_other:
-                        same_pred_other_mask_correct += 1
+                _update_matrix(other_concepts['unmasked']['all'], pred_orig, true_val)
+                _update_matrix(other_concepts['masked']['all'], pred_mask, true_val)
+                _update_matrix(other_concepts['unmasked'][subset], pred_orig, true_val)
+                _update_matrix(other_concepts['masked'][subset], pred_mask, true_val)
 
     results = {
         'meta_concept': meta_name,
         'sub_concepts': [dataset.consept_labels_names[i] for i in concept_indices],
         'n_sub_concepts': len(concept_indices),
-
-        # Image breakdown
         'total_images': total_images,
         'images_without_coords': images_without_coords,
         'same_class_pred_count': same_class_pred_count,
         'diff_class_pred_count': diff_class_pred_count,
-
-        # 1. Target concept (same class predictions)
-        '1_target_concept_same_pred_original': same_pred_target_orig_correct / same_pred_target_total if same_pred_target_total > 0 else 0,
-        '1_target_concept_same_pred_masked': same_pred_target_mask_correct / same_pred_target_total if same_pred_target_total > 0 else 0,
-        '1_target_concept_same_pred_count': same_pred_target_total,
-
-        # 2. Target concept (all images) with confusion matrix
-        '2_target_concept_all_images_original': all_target_orig_correct / all_target_total if all_target_total > 0 else 0,
-        '2_target_concept_all_images_masked': all_target_mask_correct / all_target_total if all_target_total > 0 else 0,
-        '2_target_concept_all_images_count': all_target_total,
-
-        'target_orig_tp': target_orig_tp,
-        'target_orig_fp': target_orig_fp,
-        'target_orig_tn': target_orig_tn,
-        'target_orig_fn': target_orig_fn,
-
-        'target_mask_tp': target_mask_tp,
-        'target_mask_fp': target_mask_fp,
-        'target_mask_tn': target_mask_tn,
-        'target_mask_fn': target_mask_fn,
-
-        # Confusion matrices for SAME class predictions
-        'same_pred_target_orig_tp': same_pred_target_orig_tp,
-        'same_pred_target_orig_fp': same_pred_target_orig_fp,
-        'same_pred_target_orig_tn': same_pred_target_orig_tn,
-        'same_pred_target_orig_fn': same_pred_target_orig_fn,
-
-        'same_pred_target_mask_tp': same_pred_target_mask_tp,
-        'same_pred_target_mask_fp': same_pred_target_mask_fp,
-        'same_pred_target_mask_tn': same_pred_target_mask_tn,
-        'same_pred_target_mask_fn': same_pred_target_mask_fn,
-
-        # Confusion matrices for DIFFERENT class predictions
-        'diff_pred_target_orig_tp': diff_pred_target_orig_tp,
-        'diff_pred_target_orig_fp': diff_pred_target_orig_fp,
-        'diff_pred_target_orig_tn': diff_pred_target_orig_tn,
-        'diff_pred_target_orig_fn': diff_pred_target_orig_fn,
-
-        'diff_pred_target_mask_tp': diff_pred_target_mask_tp,
-        'diff_pred_target_mask_fp': diff_pred_target_mask_fp,
-        'diff_pred_target_mask_tn': diff_pred_target_mask_tn,
-        'diff_pred_target_mask_fn': diff_pred_target_mask_fn,
-
-        # 3. Other concepts (same class predictions)
-        '3_other_concepts_same_pred_original': same_pred_other_orig_correct / same_pred_other_total if same_pred_other_total > 0 else 0,
-        '3_other_concepts_same_pred_masked': same_pred_other_mask_correct / same_pred_other_total if same_pred_other_total > 0 else 0,
-        '3_other_concepts_same_pred_count': same_pred_other_total,
-
-        # 3b. Other concepts (all images)
-        '3b_other_concepts_all_images_original': all_other_orig_correct / all_other_total if all_other_total > 0 else 0,
-        '3b_other_concepts_all_images_masked': all_other_mask_correct / all_other_total if all_other_total > 0 else 0,
-        '3b_other_concepts_all_images_count': all_other_total,
-
-        # 4. Class accuracy (all images)
-        '4_class_all_images_original': all_class_orig_correct / all_class_total if all_class_total > 0 else 0,
-        '4_class_all_images_masked': all_class_mask_correct / all_class_total if all_class_total > 0 else 0,
-        '4_class_all_images_count': all_class_total,
-        '4_class_orig_correct': all_class_orig_correct,
-        '4_class_orig_incorrect': all_class_total - all_class_orig_correct,
-        '4_class_mask_correct': all_class_mask_correct,
-        '4_class_mask_incorrect': all_class_total - all_class_mask_correct,
+        'manipulated': manipulated,
+        'other_concepts': other_concepts,
+        'class_accuracy': class_stats,
     }
 
     return results
+
+
+def _acc(matrix):
+    total = matrix['tp'] + matrix['fp'] + matrix['tn'] + matrix['fn']
+    return (matrix['tp'] + matrix['tn']) / total if total > 0 else 0
 
 
 def main():
@@ -361,6 +214,8 @@ def main():
     for name, indices in meta_concepts.items():
         print(f"  {name}: {len(indices)} sub-concepts (indices {indices})")
 
+    os.makedirs('results_experiment1', exist_ok=True)
+
     # Run analysis for each meta concept
     for meta_name, concept_indices in meta_concepts.items():
         print(f"\n{'='*70}")
@@ -379,21 +234,29 @@ def main():
             n_concepts=n_concepts,
         )
 
+        images_analyzed = results['total_images'] - results['images_without_coords']
+        if images_analyzed == 0:
+            print(f"  SKIPPED: No images had coordinates for {meta_name} (all {results['total_images']} skipped)")
+            continue
+
         # Save results as JSON
-        output_path = os.path.join('results', f'{meta_name}.json')
+        output_path = os.path.join('results_experiment1', f'{meta_name}.json')
         with open(output_path, 'w') as f:
             json.dump(results, f, indent=2)
         print(f"Saved results to {output_path}")
 
         # Print summary
+        m = results['manipulated']
+        o = results['other_concepts']
+        cs = results['class_accuracy']
         print(f"\nSummary for {meta_name}:")
-        print(f"  Images analyzed: {results['4_class_all_images_count']} (skipped {results['images_without_coords']} without coords)")
+        print(f"  Images analyzed: {images_analyzed} (skipped {results['images_without_coords']} without coords)")
         print(f"  Same/Diff class predictions: {results['same_class_pred_count']}/{results['diff_class_pred_count']}")
-        print(f"  Target concept acc (same class): orig={results['1_target_concept_same_pred_original']:.4f}, masked={results['1_target_concept_same_pred_masked']:.4f}")
-        print(f"  Target concept acc (all images): orig={results['2_target_concept_all_images_original']:.4f}, masked={results['2_target_concept_all_images_masked']:.4f}")
-        print(f"  Other concepts acc (same class): orig={results['3_other_concepts_same_pred_original']:.4f}, masked={results['3_other_concepts_same_pred_masked']:.4f}")
-        print(f"  Other concepts acc (all images): orig={results['3b_other_concepts_all_images_original']:.4f}, masked={results['3b_other_concepts_all_images_masked']:.4f}")
-        print(f"  Class acc (all images):          orig={results['4_class_all_images_original']:.4f}, masked={results['4_class_all_images_masked']:.4f}")
+        print(f"  Manipulated acc (all):       unmasked={_acc(m['unmasked']['all']):.4f}, masked={_acc(m['masked']['all']):.4f}")
+        print(f"  Manipulated acc (same_pred): unmasked={_acc(m['unmasked']['same_pred']):.4f}, masked={_acc(m['masked']['same_pred']):.4f}")
+        print(f"  Other acc (all):             unmasked={_acc(o['unmasked']['all']):.4f}, masked={_acc(o['masked']['all']):.4f}")
+        print(f"  Other acc (same_pred):       unmasked={_acc(o['unmasked']['same_pred']):.4f}, masked={_acc(o['masked']['same_pred']):.4f}")
+        print(f"  Class acc:                   unmasked={cs['unmasked']['correct']/cs['unmasked']['total']:.4f}, masked={cs['masked']['correct']/cs['masked']['total']:.4f}")
 
 
 if __name__ == '__main__':

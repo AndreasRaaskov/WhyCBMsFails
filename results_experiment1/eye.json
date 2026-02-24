@@ -1,0 +1,105 @@
+{
+  "meta_concept": "eye",
+  "sub_concepts": [
+    "has_eye_color::black"
+  ],
+  "n_sub_concepts": 1,
+  "total_images": 5794,
+  "images_without_coords": 509,
+  "same_class_pred_count": 3551,
+  "diff_class_pred_count": 1734,
+  "manipulated": {
+    "unmasked": {
+      "all": {
+        "tp": 5101,
+        "fp": 17,
+        "tn": 164,
+        "fn": 3
+      },
+      "same_pred": {
+        "tp": 3413,
+        "fp": 6,
+        "tn": 132,
+        "fn": 0
+      },
+      "diff_pred": {
+        "tp": 1688,
+        "fp": 11,
+        "tn": 32,
+        "fn": 3
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 5095,
+        "fp": 30,
+        "tn": 151,
+        "fn": 9
+      },
+      "same_pred": {
+        "tp": 3413,
+        "fp": 11,
+        "tn": 127,
+        "fn": 0
+      },
+      "diff_pred": {
+        "tp": 1682,
+        "fp": 19,
+        "tn": 24,
+        "fn": 9
+      }
+    }
+  },
+  "other_concepts": {
+    "unmasked": {
+      "all": {
+        "tp": 104312,
+        "fp": 6689,
+        "tn": 463666,
+        "fn": 11968
+      },
+      "same_pred": {
+        "tp": 72774,
+        "fp": 3133,
+        "tn": 313074,
+        "fn": 5180
+      },
+      "diff_pred": {
+        "tp": 31538,
+        "fp": 3556,
+        "tn": 150592,
+        "fn": 6788
+      }
+    },
+    "masked": {
+      "all": {
+        "tp": 89932,
+        "fp": 12255,
+        "tn": 458100,
+        "fn": 26348
+      },
+      "same_pred": {
+        "tp": 70092,
+        "fp": 3630,
+        "tn": 312577,
+        "fn": 7862
+      },
+      "diff_pred": {
+        "tp": 19840,
+        "fp": 8625,
+        "tn": 145523,
+        "fn": 18486
+      }
+    }
+  },
+  "class_accuracy": {
+    "unmasked": {
+      "correct": 3972,
+      "total": 5285
+    },
+    "masked": {
+      "correct": 2955,
+      "total": 5285
+    }
+  }
+}
