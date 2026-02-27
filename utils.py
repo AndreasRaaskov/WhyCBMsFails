@@ -1,6 +1,8 @@
 import torch
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
+from IPython.display import display
 
 
 def Concept_cut_out(x, concept_coordinates, concept_idx, size=50):
@@ -407,3 +409,76 @@ def simple_analysis(results, concept_idx, concept_name=None):
     print(f"   Masked:   Correct={results['4_class_mask_correct']}, Incorrect={results['4_class_mask_incorrect']}")
 
     print(f"\n{'='*70}\n")
+
+
+def print_prediction(dataset, idx, concept_preds, pred_class_idx, pred_confidence=None, mispredict_class_idx=None):
+    """
+    Display a scrollable styled dataframe with concept predictions for a single image.
+
+    Args:
+        dataset: CUB_dataset instance (with majority voting enabled)
+        idx: index into the dataset
+        concept_preds: tensor of concept predictions (shape [n_concepts]), raw model output
+        pred_class_idx: predicted class index (int)
+        pred_confidence: optional confidence score for the predicted class
+        mispredict_class_idx: if True, uses pred_class_idx to show the majority voted
+            labels of the predicted class. Can also pass a specific class index (int).
+    """
+    img_id = dataset.data_id[idx]
+    _, c_majority, y, _ = dataset[idx]
+    true_class_idx = torch.argmax(y).item()
+
+    # Load raw per-image concepts (before majority voting)
+    raw_concepts, _ = dataset.load_concepts(dataset.image_dir.replace('/images', ''))
+    raw_concept_all = raw_concepts[img_id]
+
+    # Filter to the same concepts used after majority voting
+    if hasattr(dataset, 'concept_mask'):
+        raw_concept_filtered = [raw_concept_all[i] for i in dataset.concept_mask]
+    else:
+        raw_concept_filtered = raw_concept_all
+
+    concept_names = list(dataset.consept_labels_names)
+    n = len(concept_names)
+
+    # Convert predictions to list of floats
+    if isinstance(concept_preds, torch.Tensor):
+        pred_values = concept_preds.detach().cpu().squeeze()
+    else:
+        pred_values = torch.tensor(concept_preds).squeeze()
+
+    df = pd.DataFrame({
+        'Concept': concept_names,
+        'Prediction': [f"{pred_values[i].item():.3f}" for i in range(n)],
+        'Pred (binary)': [bool(pred_values[i].item() >= 0.5) for i in range(n)],
+        'True (original)': [bool(raw_concept_filtered[i]) for i in range(n)],
+        'True (majority voting)': [bool(c_majority[i].item()) for i in range(n)],
+    })
+
+    # Add misprediction majority voted labels if provided
+    if mispredict_class_idx is not None and mispredict_class_idx is not False:
+        if mispredict_class_idx is True:
+            mispredict_class_idx = pred_class_idx
+        mispredict_concepts = dataset.concepts[mispredict_class_idx]
+        mispredict_name = dataset.class_labels_names[mispredict_class_idx] if hasattr(dataset, 'class_labels_names') else str(mispredict_class_idx)
+        df[f'{mispredict_name} (majority voting)'] = [bool(v) for v in mispredict_concepts[:n]]
+
+    df['Vote Differs'] = (df['True (original)'] != df['True (majority voting)'])
+
+    # Print summary
+    true_name = dataset.class_labels_names[true_class_idx] if hasattr(dataset, 'class_labels_names') else str(true_class_idx)
+    pred_name = dataset.class_labels_names[pred_class_idx] if hasattr(dataset, 'class_labels_names') else str(pred_class_idx)
+    conf_str = f"  (confidence: {pred_confidence:.3f})" if pred_confidence is not None else ""
+    print(f"Image index: {idx}  (img_id: {img_id})")
+    print(f"True class:      {true_class_idx} - {true_name}")
+    print(f"Predicted class: {pred_class_idx} - {pred_name}{conf_str}")
+    correct_mv = (df['Pred (binary)'] == df['True (majority voting)']).sum()
+    correct_orig = (df['Pred (binary)'] == df['True (original)']).sum()
+    print(f"Concept accuracy (majority voting): {correct_mv}/{n}")
+    print(f"Concept accuracy (original): {correct_orig}/{n}")
+    print(f"Labels differ (original vs majority voting): {df['Vote Differs'].sum()}/{n}")
+
+    # Display as scrollable plain dataframe (no color styling)
+    with pd.option_context('display.max_rows', None):
+        display(df)
+    return df
